@@ -11,7 +11,7 @@ function layout(title, user, content) {
   const navigation = user
     ? `<nav><a href="/dashboard">Dashboard</a>${user.role === 'admin' ? ' <a href="/admin">Administration</a>' : ''} <form method="post" action="/logout"><button>Sign out</button></form></nav>`
     : '';
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${title}</title><style>body{font:16px system-ui;max-width:760px;margin:3rem auto;padding:0 1rem}nav{display:flex;gap:1rem;align-items:center}form{display:inline}input,button,textarea{display:block;margin:.5rem 0;padding:.5rem}textarea{width:100%;min-height:5rem}.notice{background:#eef7ee;padding:1rem}</style></head><body>${navigation}<main>${content}</main></body></html>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${title}</title><link rel="stylesheet" href="/styles.css"></head><body>${navigation}<main>${content}</main></body></html>`;
 }
 
 function sendHtml(response, html, status = 200, headers = {}) {
@@ -54,6 +54,10 @@ function createApp() {
   return http.createServer(async (request, response) => {
     const url = new URL(request.url, 'http://localhost');
     const user = getUserFromRequest(request);
+    if (request.method === 'GET' && url.pathname === '/styles.css') {
+      response.writeHead(200, { 'Content-Type': 'text/css; charset=utf-8', 'Cache-Control': 'public, max-age=3600' });
+      return response.end(require('node:fs').readFileSync(require('node:path').join(__dirname, '../public/styles.css')));
+    }
     if (request.method === 'GET' && url.pathname === '/') return redirect(response, user ? '/dashboard' : '/login');
     if (request.method === 'GET' && url.pathname === '/login') return loginPage(response);
     if (request.method === 'POST' && url.pathname === '/login') {

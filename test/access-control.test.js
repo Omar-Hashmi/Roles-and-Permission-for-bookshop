@@ -24,6 +24,13 @@ test('guests are rejected from protected pages', async () => {
   assert.equal(response.status, 401);
 });
 
+test('the responsive frontend stylesheet is served', async () => {
+  const response = await fetch(`${baseUrl}/styles.css`);
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get('content-type'), /text\/css/);
+  assert.match(await response.text(), /@media/);
+});
+
 test('normal users may reach their dashboard', async () => {
   const cookie = await signIn('user@example.test', 'UserPass123!');
   const response = await fetch(`${baseUrl}/dashboard`, { headers: { cookie } });

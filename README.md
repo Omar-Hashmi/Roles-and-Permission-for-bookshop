@@ -17,6 +17,8 @@ node src/server.js
 
 Open `http://localhost:3000`.
 
+The frontend is server-rendered HTML with responsive styling in `public/styles.css`; no package installation or frontend build step is needed.
+
 Demo accounts:
 
 | Email | Password | Role |
